@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +11,9 @@ public  class TransactionCSVReader {
     public static List<Transaction> readTransactions(String filePath) {
         List<Transaction> transactions = new ArrayList<>();
         try {
-            URL url = new URL(filePath);
+            URL url = URI.create(filePath).toURL();
             // Відкриття потоку для читання з URL
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] values = line.split(",");
