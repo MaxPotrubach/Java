@@ -1,6 +1,7 @@
 package com.shop.process.service;
 
 import com.shop.model.Order;
+import com.shop.model.Product;
 import com.shop.storage.repository.OrderRepository;
 
 import java.util.concurrent.ExecutorService;
@@ -12,15 +13,22 @@ public class OrderService {
 
     public OrderService(OrderRepository repository) {
         this.repository = repository;
-
         this.executorService = Executors.newFixedThreadPool(4);
     }
 
-    public void processOrder(Order order) {
+    public <T extends Product> void processOrder(Order<T> order) {
         executorService.submit(() -> {
-            System.out.println("Processing order: " + order.getId() + " by " + Thread.currentThread().getName());
+            String threadName = Thread.currentThread().getName();
 
-            try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+            System.out.println("Processing order ID: " + order.getId()
+                    + " [" + order.getProduct().getName() + "] by " + threadName);
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            }
 
             repository.save(order);
         });
